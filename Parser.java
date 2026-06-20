@@ -29,6 +29,7 @@ public class Parser {
     private int retornos[]= new int[10];
     private int cntIns = 0;
     //---------------------------------------------
+    private static int contador = 0;
   
 /*     public static void main(String[] args){
         //var1 int ; var2 int; if var1 == var2 then print var1 + var2 else begin	if var1 + var2 then var1 := var2 + var1	else var2 := var1 + var2 end
@@ -44,6 +45,7 @@ public class Parser {
     
     //INICIO DE ANÁLISIS SINTÁCTICO
     public void advance() {
+        contador++;
         token = s.getToken(true);
         tokenActual = s.getToken(false);
         tknCode = stringToCode(token);
@@ -64,6 +66,10 @@ public class Parser {
         Declarax d = D();
         createTable();
         Statx s = S();
+        if(this.s.getLongitud()!=contador){
+            System.out.println("Hay codigo de mas en el archivo que la gramatica no puede procesar.");
+            System.out.println("A partir del token \"" + this.s.getTokenSobrante() + "\" en la linea " + this.s.getLineaTokenSobrante() +" ya no se tomo en cuenta nada.");
+        }
         
         return new Programax(tablaSimbolos,s);
     }

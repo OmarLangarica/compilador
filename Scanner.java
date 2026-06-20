@@ -7,13 +7,16 @@ import javax.swing.JOptionPane;
 public class Scanner {
     
 //DECLARACIONES
-    private int lineaNo, k;
+    private int lineaNo, k, longitud;
     private final String[] tokens;
     private String tipoToken;
     private String token;
     private final String[] reservadas = {"if", "then", "else", "begin", "print", "end", "int", "float"};
     private final String[] operadores = {"==", ":=", "+"};
     private final String delimitador = ";";
+
+    private String tokenSobrante;
+    private final String codigoFuente;
 
 
 //main 
@@ -30,6 +33,8 @@ public class Scanner {
         lineaNo = 0; //Aun sin implementar...
         k=0;
         token = "";
+        longitud = tokens.length;
+        codigoFuente = codigo;
     }
     
 //MÉTODO que retorna tokens válidos al parser
@@ -125,6 +130,40 @@ public class Scanner {
     
     public String checkNextToken() {
         return tokens[k];
+    }
+
+    public int getLongitud(){
+        return longitud;
+    }
+
+    public String getTokenSobrante(){
+        tokenSobrante = tokens[k];
+        return tokenSobrante;
+    }
+
+    public int getLineaTokenSobrante() {
+        int contadorTokens = 0;
+
+        String[] lineas = codigoFuente.split("\\R", -1);
+
+        for(int i = 0; i < lineas.length; i++) {
+
+            String linea = lineas[i].trim();
+
+            if(linea.isEmpty()) {
+                continue;
+            }
+
+            String[] tokensLinea = linea.split("\\s+");
+
+            contadorTokens += tokensLinea.length;
+
+            if(k < contadorTokens) {
+                return i + 1;
+            }
+        }
+
+        return -1;
     }
     
     public void error(String error) {
