@@ -58,7 +58,7 @@ public class Parser {
             advance();
         }
         else{
-            error(token, "token tipo:"+t);
+            error(token, codigoAToken(t));
         }
     }
     
@@ -67,7 +67,7 @@ public class Parser {
         createTable();
         Statx s = S();
         if(this.s.getLongitud()!=contador){
-            System.out.println("Hay codigo de mas en el archivo que la gramatica no puede procesar.");
+            System.out.println("Hay codigo de mas al final del archivo.");
             System.out.println("A partir del token \"" + this.s.getTokenSobrante() + "\" en la linea " + this.s.getLineaTokenSobrante() +" ya no se tomo en cuenta nada.");
         }
         
@@ -198,11 +198,12 @@ public class Parser {
     
     
     public void error(String token, String t) {
+        String mensaje = "Error sintáctico:\n" + "El token:(" + token + ") no concuerda con la gramática del lenguaje,\n" + "se espera: " + t;
+
+        System.out.println(mensaje);
+
         switch(JOptionPane.showConfirmDialog(null,
-                "Error sintáctico:\n"
-                        + "El token:("+ token + ") no concuerda con la gramática del lenguaje,\n"
-                        + "se espera: " + t + ".\n"
-                        + "¿Desea detener la ejecución?",
+                mensaje + ".\n" + "¿Desea detener la ejecución?",
                 "Ha ocurrido un error",
                 JOptionPane.YES_NO_OPTION)) {
             case JOptionPane.NO_OPTION:
@@ -214,7 +215,7 @@ public class Parser {
                 break;
         }
     }
-    
+
     public int stringToCode(String t) {
         int codigo = 0;
         switch(t) {
@@ -233,6 +234,25 @@ public class Parser {
             default: codigo=13; break;
         }
         return codigo;
+    }
+
+    public String codigoAToken(int codigo) {
+        switch(codigo) {
+            case ifx: return "if";
+            case thenx: return "then";
+            case elsex: return "else";
+            case beginx: return "begin";
+            case endx: return "end";
+            case printx: return "print";
+            case semi: return ";";
+            case sum: return "+";
+            case igual: return ":=";
+            case igualdad: return "==";
+            case intx: return "int";
+            case floatx: return "float";
+            case id: return "identificador";
+            default: return "desconocido";
+        }
     }
     
     //Métodos para recoger la información de los tokens para luego mostrarla

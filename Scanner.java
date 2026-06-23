@@ -137,14 +137,15 @@ public class Scanner {
     }
 
     public String getTokenSobrante(){
-        tokenSobrante = tokens[k];
+        tokenSobrante = tokens[k - 1];
         return tokenSobrante;
     }
 
     public int getLineaTokenSobrante() {
+        int indiceToken = k - 1;
         int contadorTokens = 0;
 
-        String[] lineas = codigoFuente.split("\\R", -1);
+        String[] lineas = codigoFuente.split("\\R");
 
         for(int i = 0; i < lineas.length; i++) {
 
@@ -158,14 +159,13 @@ public class Scanner {
 
             contadorTokens += tokensLinea.length;
 
-            if(k < contadorTokens) {
+            if(indiceToken < contadorTokens) {
                 return i + 1;
             }
         }
 
         return -1;
     }
-    
     public void error(String error) {
         switch(JOptionPane.showConfirmDialog(null,
                 "Error léxico: " + error + ".\n"
