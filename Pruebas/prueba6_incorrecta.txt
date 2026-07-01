@@ -1,0 +1,18 @@
+a int ;
+b double ;
+c float ;
+d long ;
+
+begin
+a := a + b ;
+
+b := b - a ;
+
+c := c * d ;
+
+d := d / c ;
+
+print a + b ;
+
+print c * d
+end
