@@ -69,6 +69,10 @@ public class Parser {
         if(this.s.getLongitud()!=contador){
             System.out.println("Hay código de más al final del archivo.");
             System.out.println("A partir del token \"" + this.s.getTokenSobrante() + "\" en la línea " + this.s.getLineaTokenSobrante() +" ya no se tomó en cuenta nada.");
+        }else{
+            System.out.println();
+            System.out.println("Bytecode Generado");
+            System.out.println(getBytecode());
         }
         
         return new Programax(tablaSimbolos,s);
@@ -137,7 +141,18 @@ public class Parser {
             case id:
                 Idx i;
                 Expx e;
-                eat(id);   i=new Idx(tokenActual);  declarationCheck(tokenActual); byteCode("igual", tokenActual);  eat(igual);   e=E();
+                eat(id);
+                i = new Idx(tokenActual);
+                declarationCheck(tokenActual);
+
+                String variable = tokenActual;
+
+                eat(igual);
+
+                e = E();
+
+                byteCode("igual", variable);
+
                 return new Asignax(i, e);
                 
             case printx:
@@ -471,8 +486,7 @@ public class Parser {
         }
         switch(tipo) {
             case "igual":
-                pilaBC[cntBC+3] = cntIns+4 + ": istore_" + pos1;
-                cntIns++;
+                ipbc(cntIns + ": istore_" + pos1);
                 jmp2 = cntBC;
             break;
         }
