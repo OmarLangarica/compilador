@@ -1,0 +1,10 @@
+a int ;
+b int ;
+
+begin
+while a == b do
+begin
+a := a + b ;
+print a + b
+end
+end

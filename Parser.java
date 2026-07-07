@@ -14,7 +14,7 @@ public class Parser {
     private Vector tablaSimbolos = new Vector();
     private final Scanner s;
     final int ifx=1, thenx=2, elsex=3, beginx=4, endx=5, printx=6, semi=7,
-            sum=8, igual=9, igualdad=10, intx=11, floatx=12, id=13, doublex=14, longx=15, res=16, mul=17, div=18;
+            sum=8, igual=9, igualdad=10, intx=11, floatx=12, id=13, doublex=14, longx=15, res=16, mul=17, div=18, whilex=19, dox=20;
     private int tknCode, tokenEsperado;
     private String token, tokenActual, log;
     
@@ -159,6 +159,17 @@ public class Parser {
                 Expx ex;
                 eat(printx);    ex=E();
                 return new Printx(ex);
+
+            case whilex:
+                Expx eWhile;
+                Statx sWhile;
+
+                eat(whilex);
+                eWhile = E();
+                eat(dox);
+                sWhile = S();
+
+                return new Whilex(eWhile, sWhile);
                 
             default: error(token, "(if | begin | id | print)");
                 return null;
@@ -290,6 +301,8 @@ public class Parser {
             case "-": codigo=16; break;
             case "*": codigo=17; break;
             case "/": codigo=18; break;
+            case "while": codigo = 19; break;
+            case "do": codigo = 20; break;
             default: codigo=13; break;
         }
         return codigo;
@@ -315,6 +328,8 @@ public class Parser {
             case res: return "-";
             case mul: return "*";
             case div: return "/";
+            case whilex: return "while";
+            case dox: return "do";
             default: return "desconocido";
         }
     }
