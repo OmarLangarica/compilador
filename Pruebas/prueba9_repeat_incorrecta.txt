@@ -1,0 +1,13 @@
+a int ;
+b int ;
+
+begin
+repeat
+begin
+a := a + b ;
+b := b - a ;
+print a + b
+end
+
+a == b
+end

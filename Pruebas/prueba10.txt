@@ -1,0 +1,32 @@
+a int ;
+b long ;
+c float ;
+d double ;
+
+begin
+
+if a == b then
+begin
+print a + b
+end
+else
+begin
+print b - a
+end ;
+
+while a == b do
+begin
+a := a + b ;
+print a + b
+end ;
+
+repeat
+begin
+b := b - a ;
+c := c * d ;
+print c * d
+end
+until
+a == b
+
+end

@@ -1,0 +1,7 @@
+a int ;
+b int ;
+
+begin
+repeat a := a + b until
+a == b
+end

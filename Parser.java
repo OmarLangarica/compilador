@@ -14,7 +14,8 @@ public class Parser {
     private Vector tablaSimbolos = new Vector();
     private final Scanner s;
     final int ifx=1, thenx=2, elsex=3, beginx=4, endx=5, printx=6, semi=7,
-            sum=8, igual=9, igualdad=10, intx=11, floatx=12, id=13, doublex=14, longx=15, res=16, mul=17, div=18, whilex=19, dox=20;
+            sum=8, igual=9, igualdad=10, intx=11, floatx=12, id=13, doublex=14,
+            longx=15, res=16, mul=17, div=18, whilex=19, dox=20, repeatx=21, untilx=22;
     private int tknCode, tokenEsperado;
     private String token, tokenActual, log;
     
@@ -127,13 +128,23 @@ public class Parser {
                 Statx s1, s2;
                 eat(ifx);
                 e1= E();
+                ipbc(cntIns + ": if_icmpne ");
+                int saltoElse = cntBC - 1;
+
                 eat(thenx);
                 s1=S();
-                eat(elsex);
-                s2=S();                
-                return new Ifx(e1, s1, s2);
+                ipbc(cntIns + ": goto ");
+                int saltoFin = cntBC - 1;
 
+                pilaBC[saltoElse] += cntBC;
+
+                eat(elsex);
+                s2=S();               
                 
+                pilaBC[saltoFin] += cntBC;
+
+                return new Ifx(e1, s1, s2);
+    
             case beginx:
                 eat(beginx);    S();    L();
                 return null;
@@ -158,6 +169,7 @@ public class Parser {
             case printx:
                 Expx ex;
                 eat(printx);    ex=E();
+                byteCode("print", "");
                 return new Printx(ex);
 
             case whilex:
@@ -165,13 +177,36 @@ public class Parser {
                 Statx sWhile;
 
                 eat(whilex);
+                int inicioWhile = cntBC;
+
                 eWhile = E();
+                ipbc(cntIns + ": if_icmpne ");
+                int salidaWhile = cntBC - 1;
+    
                 eat(dox);
                 sWhile = S();
 
+                ipbc(cntIns + ": goto " + inicioWhile);
+
+                pilaBC[salidaWhile] += cntBC;
+
                 return new Whilex(eWhile, sWhile);
+
+            case repeatx:
+                Expx eRepeat;
+                Statx sRepeat;
+
+                eat(repeatx);
+                int inicioRepeat = cntBC;
+
+                sRepeat = S();
+                eat(untilx);
+                eRepeat = E();
+                ipbc(cntIns + ": if_icmpne " + inicioRepeat);
+
+                return new Repeatx(sRepeat, eRepeat);
                 
-            default: error(token, "(if | begin | id | print)");
+            default: error(token, "(if | begin | id | print | while | repeat)");
                 return null;
         }
     }
@@ -303,6 +338,8 @@ public class Parser {
             case "/": codigo=18; break;
             case "while": codigo = 19; break;
             case "do": codigo = 20; break;
+            case "repeat": codigo = 21; break;
+            case "until": codigo = 22; break;
             default: codigo=13; break;
         }
         return codigo;
@@ -330,6 +367,8 @@ public class Parser {
             case div: return "/";
             case whilex: return "while";
             case dox: return "do";
+            case repeatx: return "repeat";
+            case untilx: return "until";
             default: return "desconocido";
         }
     }
@@ -456,10 +495,8 @@ public class Parser {
         
         switch(tipo) {
           case "igualdad":
-            ipbc(cntIns + ": iload_"+pos1);
-            ipbc(cntIns + ": iload_"+pos2);
-            ipbc(cntIns + ": ifne " + (cntIns+4));
-            jmp1 = cntBC;
+            ipbc(cntIns + ": iload_" + pos1);
+            ipbc(cntIns + ": iload_" + pos2);
           break;
 
           case "suma":
@@ -503,6 +540,9 @@ public class Parser {
             case "igual":
                 ipbc(cntIns + ": istore_" + pos1);
                 jmp2 = cntBC;
+            break;
+            case "print":
+                ipbc(cntIns + ": print");
             break;
         }
     }
